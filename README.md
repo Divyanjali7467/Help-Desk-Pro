@@ -2,7 +2,11 @@
 
 > A lightweight, full-stack employee support ticketing system designed to mirror real-world enterprise service-management applications. Available in both **Flask + Vanilla JS SPA** and **Streamlit Data App** interfaces.
 
-![HelpDesk Pro Screenshot](https://via.placeholder.com/800x400?text=HelpDesk+Pro+Dashboard)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://app-desk-pro-endcs4mbzgppmzsas52fwl.streamlit.app/)
+
+### 🌐 **Live Interactive Demo:** [app-desk-pro.streamlit.app](https://app-desk-pro-endcs4mbzgppmzsas52fwl.streamlit.app/)
+
+---
 
 ## 📖 Overview
 HelpDesk Pro is an internal IT/HR support ticketing system built to bridge the gap between basic CRUD apps and enterprise-grade software engineering projects. It allows employees to submit support requests and enables administrators/IT agents to track, manage, filter, and resolve tickets efficiently.
@@ -18,7 +22,14 @@ HelpDesk Pro is an internal IT/HR support ticketing system built to bridge the g
 * **Analytics & Reports:** Interactive category and status distribution charts in the Streamlit interface.
 * **Dual Interface Options:**
   - **Flask + Vanilla JS SPA**: Fast RESTful single-page web app.
-  - **Streamlit Data App**: Native Python interactive dashboard ideal for quick iteration and Cloud hosting.
+  - **Streamlit Data App**: Native Python interactive dashboard hostable on Streamlit Community Cloud.
+
+---
+
+## 🌐 Live Demo & Deployment
+
+Try the application live on Streamlit Cloud without local installation:
+👉 **[Launch HelpDesk Pro Live Demo](https://app-desk-pro-endcs4mbzgppmzsas52fwl.streamlit.app/)**
 
 ---
 
@@ -36,14 +47,14 @@ HelpDesk Pro is an internal IT/HR support ticketing system built to bridge the g
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Local Setup & Installation
 
 ### 1. Installation & Dependencies
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/helpdesk-pro.git
-cd helpdesk-pro
+git clone https://github.com/Divyanjali7467/Help-Desk-Pro.git
+cd Help-Desk-Pro
 
 # Create and activate virtual environment
 python -m venv .venv
@@ -57,7 +68,7 @@ pip install -r requirements.txt
 python seed.py
 ```
 
-### 2. Option A: Run Streamlit Application (Recommended for Cloud)
+### 2. Option A: Run Streamlit Application
 
 ```bash
 streamlit run streamlit_app.py
@@ -70,26 +81,6 @@ Open [http://localhost:8501](http://localhost:8501) in your browser.
 python app.py
 ```
 Open [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser.
-
----
-
-## ☁️ Deploying Streamlit App to Streamlit Community Cloud
-
-1. **Push your code to GitHub**:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit HelpDesk Pro"
-   git branch -M main
-   git remote add origin https://github.com/YOUR_USERNAME/helpdesk-pro.git
-   git push -u origin main
-   ```
-
-2. **Deploy via Streamlit Cloud**:
-   - Go to [share.streamlit.io](https://share.streamlit.io).
-   - Click **New app**.
-   - Select your repository (`YOUR_USERNAME/helpdesk-pro`), branch (`main`), and set Main file path to `streamlit_app.py`.
-   - Click **Deploy**!
 
 ---
 

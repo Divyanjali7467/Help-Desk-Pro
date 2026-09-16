@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HelpDesk Pro - Enterprise Employee Support</title>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Nav -->
+        <header class="navbar">
+            <div class="navbar-brand">
+                <div class="logo-icon">🚀</div>
+                <div class="brand-text">
+                    <h1>HelpDesk <span>Pro</span></h1>
+                    <p class="subtitle">Enterprise Service Management</p>
+                </div>
+            </div>
+            <div class="navbar-actions">
+                <button id="openCreateModalBtn" class="btn btn-primary">
+                    <span class="btn-icon">+</span> Create Ticket
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Overview Cards -->
+        <section class="metrics-grid">
+            <div class="metric-card card-total">
+                <div class="metric-info">
+                    <span class="metric-label">Total Tickets</span>
+                    <h2 id="statTotal">0</h2>
+                </div>
+                <div class="metric-icon">📋</div>
+            </div>
+            <div class="metric-card card-open">
+                <div class="metric-info">
+                    <span class="metric-label">Open</span>
+                    <h2 id="statOpen">0</h2>
+                </div>
+                <div class="metric-icon">🔵</div>
+            </div>
+            <div class="metric-card card-progress">
+                <div class="metric-info">
+                    <span class="metric-label">In Progress</span>
+                    <h2 id="statProgress">0</h2>
+                </div>
+                <div class="metric-icon">🟠</div>
+            </div>
+            <div class="metric-card card-resolved">
+                <div class="metric-info">
+                    <span class="metric-label">Resolved</span>
+                    <h2 id="statResolved">0</h2>
+                </div>
+                <div class="metric-icon">🟢</div>
+            </div>
+        </section>
+
+        <!-- Search & Filter Bar -->
+        <section class="filter-section">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Search by title, description, or requester name..." autocomplete="off">
+            </div>
+
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label for="statusFilter">Status:</label>
+                    <select id="statusFilter" class="form-select">
+                        <option value="All">All Statuses</option>
+                        <option value="Open">Open</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Resolved">Resolved</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="priorityFilter">Priority:</label>
+                    <select id="priorityFilter" class="form-select">
+                        <option value="All">All Priorities</option>
+                        <option value="Urgent">Urgent</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="categoryFilter">Category:</label>
+                    <select id="categoryFilter" class="form-select">
+                        <option value="All">All Categories</option>
+                        <option value="IT">IT</option>
+                        <option value="HR">HR</option>
+                        <option value="Hardware">Hardware</option>
+                        <option value="Software">Software</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+
+                <button id="resetFiltersBtn" class="btn btn-secondary btn-sm" title="Reset all filters">
+                    ↺ Reset
+                </button>
+            </div>
+        </section>
+
+        <!-- Main Content Area: Tickets Grid -->
+        <main class="tickets-section">
+            <div class="section-header">
+                <h3>Support Tickets <span id="ticketCountBadge" class="count-badge">0</span></h3>
+            </div>
+
+            <div id="ticketsGrid" class="tickets-grid">
+                <!-- Ticket Cards rendered dynamically via JS -->
+            </div>
+
+            <div id="emptyState" class="empty-state hidden">
+                <div class="empty-icon">📂</div>
+                <h4>No Support Tickets Found</h4>
+                <p>Try adjusting your search criteria or create a new support request.</p>
+                <button class="btn btn-primary btn-sm" onclick="document.getElementById('openCreateModalBtn').click()">+ Create Ticket</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal 1: Create Ticket Modal -->
+    <div id="createTicketModal" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Submit New Ticket</h3>
+                <button class="modal-close-btn" id="closeCreateModalBtn">&times;</button>
+            </div>
+            <form id="createTicketForm" class="modal-body">
+                <div class="form-group">
+                    <label for="ticketTitle">Ticket Title <span class="required">*</span></label>
+                    <input type="text" id="ticketTitle" required placeholder="e.g. Cannot connect to office Wi-Fi">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ticketCategory">Category</label>
+                        <select id="ticketCategory" class="form-select">
+                            <option value="IT">IT Support</option>
+                            <option value="Hardware">Hardware</option>
+                            <option value="Software">Software</option>
+                            <option value="HR">HR & Personnel</option>
+                            <option value="General">General Inquiry</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ticketPriority">Priority</label>
+                        <select id="ticketPriority" class="form-select">
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                            <option value="Urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="requesterName">Your Name <span class="required">*</span></label>
+                        <input type="text" id="requesterName" required placeholder="e.g. Jane Doe">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="requesterEmail">Work Email <span class="required">*</span></label>
+                        <input type="email" id="requesterEmail" required placeholder="e.g. jane.doe@company.com">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="ticketDescription">Issue Description <span class="required">*</span></label>
+                    <textarea id="ticketDescription" rows="4" required placeholder="Provide clear details, steps to reproduce, or error messages..."></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelCreateBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="submitTicketBtn">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 2: Ticket Detail & Management Modal -->
+    <div id="ticketDetailModal" class="modal-backdrop hidden">
+        <div class="modal-card modal-lg">
+            <div class="modal-header">
+                <div class="detail-header-title">
+                    <span id="detailTicketId" class="ticket-id-tag">#0</span>
+                    <h3 id="detailTicketTitle">Ticket Title</h3>
+                </div>
+                <button class="modal-close-btn" id="closeDetailModalBtn">&times;</button>
+            </div>
+            
+            <div class="modal-body detail-modal-body">
+                <!-- Main details column -->
+                <div class="detail-main">
+                    <div class="detail-meta-bar">
+                        <span id="detailCategoryBadge" class="badge category-badge">IT</span>
+                        <span id="detailPriorityBadge" class="badge priority-badge">Medium</span>
+                        <span id="detailStatusBadge" class="badge status-badge">Open</span>
+                    </div>
+
+                    <div class="detail-box">
+                        <label class="detail-label">Requester Information</label>
+                        <div class="requester-info-row">
+                            <span class="user-avatar" id="detailAvatar">JD</span>
+                            <div>
+                                <strong id="detailRequesterName">Jane Doe</strong>
+                                <div class="text-muted" id="detailRequesterEmail">jane.doe@company.com</div>
+                            </div>
+                            <div class="created-time text-muted" id="detailCreatedAt">Posted recently</div>
+                        </div>
+                    </div>
+
+                    <div class="detail-box">
+                        <label class="detail-label">Description</label>
+                        <div id="detailDescription" class="description-content">
+                            Description text here...
+                        </div>
+                    </div>
+
+                    <!-- Comments / Resolution Log -->
+                    <div class="detail-box comments-section">
+                        <label class="detail-label">Activity & Resolution Notes (<span id="detailCommentCount">0</span>)</label>
+                        
+                        <div id="commentsList" class="comments-list">
+                            <!-- Rendered via JS -->
+                        </div>
+
+                        <!-- Add Comment Form -->
+                        <form id="addCommentForm" class="add-comment-form">
+                            <div class="form-row">
+                                <input type="text" id="commentAuthor" placeholder="Your Name / Support Agent" required class="comment-author-input">
+                            </div>
+                            <textarea id="commentContent" rows="2" placeholder="Write a note or update status response..." required></textarea>
+                            <div class="comment-submit-row">
+                                <button type="submit" class="btn btn-primary btn-sm">Add Note</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Management Sidebar inside Modal -->
+                <div class="detail-sidebar">
+                    <div class="sidebar-block">
+                        <label for="detailStatusSelect" class="sidebar-label">Update Status</label>
+                        <select id="detailStatusSelect" class="form-select">
+                            <option value="Open">Open</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Resolved">Resolved</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+
+                    <div class="sidebar-block">
+                        <label for="detailPrioritySelect" class="sidebar-label">Update Priority</label>
+                        <select id="detailPrioritySelect" class="form-select">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                            <option value="Urgent">Urgent</option>
+                        </select>
+                    </div>
+
+                    <div class="sidebar-block">
+                        <button id="saveTicketChangesBtn" class="btn btn-success btn-block">
+                            Save Changes
+                        </button>
+                    </div>
+
+                    <hr class="sidebar-divider">
+
+                    <div class="sidebar-block">
+                        <button id="deleteTicketBtn" class="btn btn-danger-outline btn-block">
+                            🗑 Delete Ticket
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- App JavaScript -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

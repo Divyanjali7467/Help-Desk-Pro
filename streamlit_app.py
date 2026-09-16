@@ -2,9 +2,10 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timezone
 
-# Import Flask app and database models
+# Import Flask app, database models, and seed script
 from app import app, db
 from models import Ticket, Comment
+from seed import seed_database
 
 # Page configuration
 st.set_page_config(
@@ -48,6 +49,17 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- Helper DB Functions inside Flask app context ---
+
+def auto_seed_if_empty():
+    """Ensure database has initial sample dataset on first launch"""
+    with app.app_context():
+        db.create_all()
+        if Ticket.query.count() == 0:
+            seed_database()
+
+# Trigger auto seed check on script load
+auto_seed_if_empty()
+
 def fetch_tickets_data(status="All", priority="All", category="All", search=""):
     with app.app_context():
         query = Ticket.query
@@ -137,9 +149,15 @@ filter_status = st.sidebar.selectbox("Filter Status", ["All", "Open", "In Progre
 filter_priority = st.sidebar.selectbox("Filter Priority", ["All", "Urgent", "High", "Medium", "Low"])
 filter_category = st.sidebar.selectbox("Filter Category", ["All", "IT", "Hardware", "Software", "HR", "General"])
 
-# Reset filters button
-if st.sidebar.button("↺ Reset Filters"):
-    st.rerun()
+col_sb1, col_sb2 = st.sidebar.columns(2)
+with col_sb1:
+    if st.button("↺ Reset Filters"):
+        st.rerun()
+with col_sb2:
+    if st.button("⚡ Reset Data"):
+        seed_database()
+        st.sidebar.success("Demo data reset!")
+        st.rerun()
 
 # --- Header & Metrics ---
 st.markdown("<div class='main-header'>HelpDesk Pro Dashboard</div>", unsafe_allow_html=True)
@@ -164,21 +182,6 @@ if page == "📋 Ticket Dashboard":
         st.info("No support tickets match your search filters.")
     else:
         for t in tickets:
-            # Determine badge styles
-            status_style = {
-                "Open": "badge-open",
-                "In Progress": "badge-progress",
-                "Resolved": "badge-resolved",
-                "Closed": "badge-closed"
-            }.get(t['status'], "badge-open")
-
-            priority_style = {
-                "Urgent": "badge-urgent",
-                "High": "badge-high",
-                "Medium": "badge-medium",
-                "Low": "badge-low"
-            }.get(t['priority'], "badge-medium")
-
             header_label = f"#{t['id']} | [{t['category']}] {t['title']} — ({t['status']} / {t['priority']})"
             
             with st.expander(header_label, expanded=False):
@@ -263,6 +266,7 @@ elif page == "➕ Submit New Ticket":
             else:
                 new_id = create_ticket_db(title, description, category, priority, req_name, req_email)
                 st.success(f"🎉 Ticket #{new_id} submitted successfully!")
+                st.rerun()
 
 # --- Page 3: Analytics & Reports ---
 elif page == "📊 Analytics & Reports":

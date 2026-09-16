@@ -1,3 +1,4 @@
+import copy
 from app import app
 from models import db, Ticket, Comment
 
@@ -102,8 +103,9 @@ def seed_database():
         db.drop_all()
         db.create_all()
 
-        for data in SAMPLE_TICKETS:
-            comments_data = data.pop('comments')
+        tickets_data = copy.deepcopy(SAMPLE_TICKETS)
+        for data in tickets_data:
+            comments_data = data.pop('comments', [])
             ticket = Ticket(**data)
             db.session.add(ticket)
             db.session.flush()
